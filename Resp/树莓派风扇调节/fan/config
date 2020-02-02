@@ -1,0 +1,68 @@
+#!/bin/bash
+
+
+function install()
+{
+	if [ ! -f "/sys/class/thermal/thermal_zone0/temp" ]; then
+		echo "/sys/class/thermal/thermal_zone0/temp not found.";
+		exit 1;
+	fi
+	
+	gpio -v >/dev/null 2>&1
+	if [ $? != 0 ];then
+		echo "please install wiringPi, sudo apt-get install wiringPi."
+		exit 1;
+	fi
+	
+	chkconfig -h >/dev/null 2>&1
+	if [ $? != 0 ]; then
+		echo "please install chkconfig, sudo apt-get install chkconfig.";
+		exit 1;
+	fi
+
+	cp ./fan /etc/init.d/
+	cp ./fan.sh /usr/local/bin/
+	
+	chmod 755 /etc/init.d/fan /usr/local/bin/fan.sh
+	
+	chkconfig -add fan >/dev/null 2>&1
+	chkconfig fan on >/dev/null 2>&1
+   	/etc/init.d/fan start >/dev/null 2>&1
+}
+
+function uninstall()
+{
+	/etc/init.d/fan stop >/dev/null 2>&1
+	chkconfig fan off >/dev/null 2>&1
+	chkconfig --del fan >/dev/null 2>&1
+
+	rm -rf /etc/init.d/fan >/dev/null 2>&1
+	rm -rf /usr/local/bin/fan.sh >/dev/null 2>&1
+	rm -rf /var/log/fan.log >/dev/null 2>&1
+}
+
+if [ `whoami` != "root" ]; then
+	echo "Please execute with root."
+	exit 1;
+fi
+
+if [ $# != 1 ]; then
+    echo "Usage: $0 ( install | uninstall )"
+	exit 1
+fi
+
+case $1 in
+	"install")
+		install
+		;;
+	
+	"uninstall")
+		uninstall;
+		;;
+	*)
+		echo "Usage: $0 ( install | uninstall )"
+	;;
+esac
+
+exit 0;
+

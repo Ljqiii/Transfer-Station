@@ -1,0 +1,49 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          fan
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 5
+# Default-Stop:      0 1 4 6
+# Short-Description: fan
+# Description:       fan
+### END INIT INFO
+
+
+case $1 in
+    start)
+            /usr/local/bin/fan.sh start &
+	    ;;  
+    stop)
+            /usr/local/bin/fan.sh stop &
+            ps aux | grep fan.sh | grep -v grep | awk '{print $2}' | xargs kill
+	    ;;  
+    set)
+	    	if [ $# != 2 ]; then
+		    	echo "Usage: \033[31m$0 set\033[0m {temperature} eg: $0 set 40"
+		    	exit 1
+			fi
+		 
+			if !(echo $2 | egrep -q '^[0-9]+$'); then
+		    	echo "wrong parame, \033[31m$2\033[0m is not a valid number."
+		    	echo "Usage: $0 set {temperature} eg: \033[31m$0 set 40\033[0m"
+		    	exit 1
+			fi
+	    	
+			sed -i "s/HIGH_TEMP=.*/HIGH_TEMP=$2/g" /usr/local/bin/fan.sh
+            		 		
+            /usr/local/bin/fan.sh stop &
+            ps aux | grep fan.sh | grep -v grep | awk '{print $2}' | xargs kill
+		    
+			sleep 0.5
+
+            /usr/local/bin/fan.sh start &
+	    	;;
+    *)  
+        echo "Usage: $0 ( \033[31mstart\033[0m | \033[31mstop\033[0m | \033[31mset\033[0m {temperature} \033[31meg:\033[0m set 40 )"
+        exit 1
+        ;;  
+esac
+exit 0
+
