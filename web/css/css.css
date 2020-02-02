@@ -1,0 +1,39 @@
+@charset "UTF-8";
+html,body {
+    height: 100%;
+    color: #ffffff;
+}
+body {
+    background: url("hd-mac-2101187.jpg") center center; /*https://www.pexels.com/ja-jp/photo/hd-mac-2101187/*/
+    background-size: cover ;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+#container{
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+}
+h1{
+    font-size: 45px;
+    text-transform: uppercase ;
+    margin-bottom: 20px;
+}
+p{
+    font-size: 15px;
+    margin-bottom: 40px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+a{
+    font-size: 13px;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    padding: 10px 100px;
+    text-decoration: none;
+}
